@@ -1,0 +1,34 @@
+@startuml
+' This is for the base Entity class from which most objects will inherit 
+class Entity
+{
+	-id : IDDataType
+	+GetID() : IDDataType
+	-name : NameDataType
+	+GetName() : NameDataType
+	-description : DescriptionDataType
+	+GetDescription() : DescriptionDataType
+}
+
+' Gender class inherits from Entity
+Entity <|-- Gender
+
+' To be inherited by objects that have relationship with genders
+abstract class HasGender
+{
+	
+}
+
+' Faction class inherits from Entity
+Entity <|-- Faction
+
+class Faction
+{
+	-toggle : bool
+	
+}
+
+
+' SpeciesTemplate class inherits from Entity
+Entity <|-- SpeciesTemplate
+@enduml
