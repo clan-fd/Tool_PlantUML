@@ -1,34 +1,137 @@
 @startuml
+' Attribute
+Entity <|-- Attribute
+
+' To be inherited by objects that have attribute values (or attribute modifiers)
+abstract class HasAttributes
+{
+	-attribute_values : std::map< AttributeIDDataType, AttributeValueDataType > 
+	+AddAttribute( AttributeIDDataType, AttributeValueDataType [optional] ) : void
+	+RemoveAttribute( AttributeIDDataType ) : void
+	+SetAttributeValue( AttributeIDDataType, AttributeValueDataType) : void
+	+GetAttributeValue( AttributeIDDataType ): void
+}
+
+' To be inherited by objects that can have range of attribute values
+abstract class HasAttributeRanges
+{
+	-attribute_ranges : std::map< AttributeIDDataType, std::pair< AttributeValueDataType, AttributeValueDataType >
+	+AddAttribute( AttributeIDDataType, AttributeValueDataType [optional], AttributeValueDataType [optional] ) : void
+	+RemoveAttribute( AttributeIDDataType ) : void
+	+SetAttributeMax( AttributeIDDataType, AttributeValueDataType) : void
+	+SetAttributeMin( AttributeIDDataType, AttributeValueDataType) : void
+	+GetAttributeMax( AttributeIDDataType ) : void
+	+GetAttributeMin( AttributeIDDataType ) : void
+}
+
 ' This is for the base Entity class from which most objects will inherit 
-class Entity
+class Entity< IDDataType >
 {
 	-id : IDDataType
+	#SetID( IDDataType ) : void
 	+GetID() : IDDataType
 	-name : NameDataType
 	+GetName() : NameDataType
+	+SetName( NameDataType ) : void
 	-description : DescriptionDataType
 	+GetDescription() : DescriptionDataType
+	+SetDescription( DescriptionDataType ) : void
 }
 
 ' Gender class inherits from Entity
 Entity <|-- Gender
 
-' To be inherited by objects that have relationship with genders
-abstract class HasGender
+' To be inherited by objects that have gender restrictions
+abstract class HasGenderRestrictions
 {
 	
+	-only_allow_listed_genders : bool  /' True = container of allowed genders (only genders on the list are allowed); '/
+				/' false = container of barred genders (only genders NOT appearing on the list are '/
+				/' allowed) '/
+	+SetOnlyAllowListedGenders( bool )
+	+GetOnlyAllowListedGenders() : bool
+	-restricted_genders : std::set< GenderIDDataType >
+	+AddGender( GenderIDDataType ) : void
+	+RemoveGender( GenderIDDataType ) : void
+	+IsGenderAllowed( GenderIDDataType ) : bool /' Returns true if gender is allowed '/
+}
+
+
+' ItemTemplate class
+Entity <|-- ItemTemplate
+HasGenderRestrictions <|-- ItemTemplate
+HasSpeciesRestrictions <|-- ItemTemplate
+HasAttributes <|-- ItemTemplate
+
+class ItemTemplate
+{
+	-mass : MassValueDataType
+	+SetMass( MassValueDataType ) : void
+	+GetMass() : MassValueDataType
+	-is_consumable : bool
+	+SetIsConsumable( bool ) : void
+	+GetIsConsumable() : bool
+	-is_stackable : bool
+	+SetIsStackable( bool ) : void
+	+GetIsStacakble() : void
+	-price : MoneyDataType /' Does not include vendor profit nor taxes '/
+	+SetPrice( MoneyDataType ) : void
+	+GetPrice() : MoneyDataType
+}
+
+' SpeciesTemplate class inherits from Entity
+Entity <|-- SpeciesTemplate
+
+class SpeciesTemplate
+{
+	-gender_options: std::set< GenderIDDataType, GenderOption >
+	+AddGender( GenderIDDataType ) : void
+	+RemoveGender( GenderIDDataType ) : void
+	+SetGenderAttributeMax( GenderIDDataType, AttributeIDDataType, AttributeValueDataType ) : void
+	+GetGenderAttributeMax( GenderIDDataType, AttributeIDDataType) : AttributeValueDataType 
+	+SetGenderAttributeMin( GenderIDDataType, AttributeIDDataType, AttributeValueDataType ) : void
+	+GetGenderAttributeMin( GenderIDDataType, AttributeIDDataType) : AttributeValueDataType 
+}
+
+' Meant to be used by Species Template
+HasAttributeRanges <|-- GenderOption
+
+class GenderOption
+{
+	
+}
+
+
+' To be inherited by objects that have species restrictions
+abstract class HasSpeciesRestrictions
+{
+	
+	-only_allow_listed_species : bool  /' True = container of allowed species (only species on the list are allowed); '/
+					/' false = container of barred species (only species NOT appearing on the list are '/
+				/' allowed) '/
+	+SetOnlyAllowListedSpecies( bool )
+	+GetOnlyAllowListedSpecies() : bool
+	-restricted_species: std::set< SpeciesIDDataType >
+	+AddSpecies( SpeciesIDDataType ) : void
+	+RemoveSpecies( SpeciesIDDataType ) : void
+	+IsSpeciesAllowed( SpeciesIDDataType ) : bool /' Returns true if species is allowed '/
 }
 
 ' Faction class inherits from Entity
 Entity <|-- Faction
+HasGenderRestrictions <|-- Faction
+HasSpeciesRestrictions <|-- Faction
 
-class Faction
+' CharacterTemplate
+Entity <|-- CharacterTemplate
+
+class CharacterTemplate
 {
-	-toggle : bool
+	-species_template_id : SpeciesTemplateIDDataType /' Used to get species, genders, and associated info '/
+	+SetSpeciesTemplateID( SpeciesTemplateIDDataType  ) : void
+	+GetSpeciesTemplateID() : SpeciesTemplateIDDataType  
 	
 }
 
 
-' SpeciesTemplate class inherits from Entity
-Entity <|-- SpeciesTemplate
 @enduml
