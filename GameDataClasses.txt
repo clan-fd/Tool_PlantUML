@@ -1,47 +1,56 @@
 @startuml
-' Attribute
-Entity <|-- Attribute
+package AttributeEditor
+{
+	' Attribute
+	.Entity <|-- Attribute
+}
 
 ' To be inherited by objects that have attribute values (or attribute modifiers)
 abstract class HasAttributes
 {
-	-attribute_values : std::map< AttributeIDDataType, AttributeValueDataType > 
-	+AddAttribute( AttributeIDDataType, AttributeValueDataType [optional] ) : void
-	+RemoveAttribute( AttributeIDDataType ) : void
-	+SetAttributeValue( AttributeIDDataType, AttributeValueDataType) : void
-	+GetAttributeValue( AttributeIDDataType ): void
+	-attribute_values : std::map< AttributeIDType, AttributeValueType > 
+	+AddAttribute( AttributeIDType, AttributeValueType [optional] ) : void
+	+RemoveAttribute( AttributeIDType ) : void
+	+SetAttributeValue( AttributeIDType, AttributeValueType) : void
+	+GetAttributeValue( AttributeIDType ): void
 }
 
+
 ' To be inherited by objects that can have range of attribute values
+
 abstract class HasAttributeRanges
 {
-	-attribute_ranges : std::map< AttributeIDDataType, std::pair< AttributeValueDataType, AttributeValueDataType >
-	+AddAttribute( AttributeIDDataType, AttributeValueDataType [optional], AttributeValueDataType [optional] ) : void
-	+RemoveAttribute( AttributeIDDataType ) : void
-	+SetAttributeMax( AttributeIDDataType, AttributeValueDataType) : void
-	+SetAttributeMin( AttributeIDDataType, AttributeValueDataType) : void
-	+GetAttributeMax( AttributeIDDataType ) : void
-	+GetAttributeMin( AttributeIDDataType ) : void
+	-attribute_ranges : std::map< AttributeIDType, std::pair< AttributeValueType, AttributeValueType >
+	+AddAttribute( AttributeIDType, AttributeValueType [optional], AttributeValueType [optional] ) : void
+	+RemoveAttribute( AttributeIDType ) : void
+	+SetAttributeMax( AttributeIDType, AttributeValueType) : void
+	+SetAttributeMin( AttributeIDType, AttributeValueType) : void
+	+GetAttributeMax( AttributeIDType ) : void
+	+GetAttributeMin( AttributeIDType ) : void
 }
 
 ' This is for the base Entity class from which most objects will inherit 
-class Entity< IDDataType >
+class Entity< IDType >
 {
-	-id : IDDataType
-	#SetID( IDDataType ) : void
-	+GetID() : IDDataType
-	-name : NameDataType
-	+GetName() : NameDataType
-	+SetName( NameDataType ) : void
-	-description : DescriptionDataType
-	+GetDescription() : DescriptionDataType
-	+SetDescription( DescriptionDataType ) : void
+	-id : IDType
+	#SetID( IDType ) : void
+	+GetID() : IDType
+	-name : NameType
+	+GetName() : NameType
+	+SetName( NameType ) : void
+	-description : DescriptionType
+	+GetDescription() : DescriptionType
+	+SetDescription( DescriptionType ) : void
 }
 
-' Gender class inherits from Entity
-Entity <|-- Gender
+package GenderEditor
+{
+	' Gender class inherits from Entity
+	.Entity <|-- Gender
+}
 
 ' To be inherited by objects that have gender restrictions
+
 abstract class HasGenderRestrictions
 {
 	
@@ -50,50 +59,51 @@ abstract class HasGenderRestrictions
 				/' allowed) '/
 	+SetOnlyAllowListedGenders( bool )
 	+GetOnlyAllowListedGenders() : bool
-	-restricted_genders : std::set< GenderIDDataType >
-	+AddGender( GenderIDDataType ) : void
-	+RemoveGender( GenderIDDataType ) : void
-	+IsGenderAllowed( GenderIDDataType ) : bool /' Returns true if gender is allowed '/
+	-restricted_genders : std::set< GenderIDType >
+	+AddGender( GenderIDType ) : void
+	+RemoveGender( GenderIDType ) : void
+	+IsGenderAllowed( GenderIDType ) : bool /' Returns true if gender is allowed '/
 }
 
 
-' ItemTemplate class
-Entity <|-- ItemTemplate
-HasGenderRestrictions <|-- ItemTemplate
-HasSpeciesRestrictions <|-- ItemTemplate
-HasAttributes <|-- ItemTemplate
+' ItemBlueprint class
+Entity <|-- ItemBlueprint
+HasGenderRestrictions <|-- ItemBlueprint
+HasSpeciesRestrictions <|-- ItemBlueprint
+HasAttributes <|-- ItemBlueprint
 
-class ItemTemplate
+class ItemBlueprint
 {
-	-mass : MassValueDataType
-	+SetMass( MassValueDataType ) : void
-	+GetMass() : MassValueDataType
+	-mass : MassValueType
+	+SetMass( MassValueType ) : void
+	+GetMass() : MassValueType
 	-is_consumable : bool
 	+SetIsConsumable( bool ) : void
 	+GetIsConsumable() : bool
 	-is_stackable : bool
 	+SetIsStackable( bool ) : void
 	+GetIsStacakble() : void
-	-price : MoneyDataType /' Does not include vendor profit nor taxes '/
-	+SetPrice( MoneyDataType ) : void
-	+GetPrice() : MoneyDataType
+	-price : MoneyValueType /' Does not include vendor profit nor taxes '/
+	+SetPrice( MoneyValueType ) : void
+	+GetPrice() : MoneyValueType
 }
 
-' SpeciesTemplate class inherits from Entity
-Entity <|-- SpeciesTemplate
+' SpeciesBlueprint class inherits from Entity
+Entity <|-- SpeciesBlueprint
 
-class SpeciesTemplate
+
+class SpeciesBlueprint
 {
-	-gender_options: std::set< GenderIDDataType, GenderOption >
-	+AddGender( GenderIDDataType ) : void
-	+RemoveGender( GenderIDDataType ) : void
-	+SetGenderAttributeMax( GenderIDDataType, AttributeIDDataType, AttributeValueDataType ) : void
-	+GetGenderAttributeMax( GenderIDDataType, AttributeIDDataType) : AttributeValueDataType 
-	+SetGenderAttributeMin( GenderIDDataType, AttributeIDDataType, AttributeValueDataType ) : void
-	+GetGenderAttributeMin( GenderIDDataType, AttributeIDDataType) : AttributeValueDataType 
+	-gender_options: std::set< GenderIDType, GenderOption >
+	+AddGender( GenderIDType ) : void
+	+RemoveGender( GenderIDType ) : void
+	+SetGenderAttributeMax( GenderIDType, AttributeIDType, AttributeValueType ) : void
+	+GetGenderAttributeMax( GenderIDType, AttributeIDType) : AttributeValueType 
+	+SetGenderAttributeMin( GenderIDType, AttributeIDType, AttributeValueType ) : void
+	+GetGenderAttributeMin( GenderIDType, AttributeIDType) : AttributeValueType 
 }
 
-' Meant to be used by Species Template
+' Meant to be used by Species Blueprint
 HasAttributeRanges <|-- GenderOption
 
 class GenderOption
@@ -103,6 +113,7 @@ class GenderOption
 
 
 ' To be inherited by objects that have species restrictions
+
 abstract class HasSpeciesRestrictions
 {
 	
@@ -111,27 +122,157 @@ abstract class HasSpeciesRestrictions
 				/' allowed) '/
 	+SetOnlyAllowListedSpecies( bool )
 	+GetOnlyAllowListedSpecies() : bool
-	-restricted_species: std::set< SpeciesIDDataType >
-	+AddSpecies( SpeciesIDDataType ) : void
-	+RemoveSpecies( SpeciesIDDataType ) : void
-	+IsSpeciesAllowed( SpeciesIDDataType ) : bool /' Returns true if species is allowed '/
+	-restricted_species: std::set< SpeciesIDType >
+	+AddSpecies( SpeciesIDType ) : void
+	+RemoveSpecies( SpeciesIDType ) : void
+	+IsSpeciesAllowed( SpeciesIDType ) : bool /' Returns true if species is allowed '/
 }
 
-' Faction class inherits from Entity
-Entity <|-- Faction
-HasGenderRestrictions <|-- Faction
-HasSpeciesRestrictions <|-- Faction
-
-' CharacterTemplate
-Entity <|-- CharacterTemplate
-
-class CharacterTemplate
+package FactionEditor
 {
-	-species_template_id : SpeciesTemplateIDDataType /' Used to get species, genders, and associated info '/
-	+SetSpeciesTemplateID( SpeciesTemplateIDDataType  ) : void
-	+GetSpeciesTemplateID() : SpeciesTemplateIDDataType  
+	' Faction class inherits from Entity
+	.Entity <|-- Faction
+	.HasGenderRestrictions <|-- Faction
+	.HasSpeciesRestrictions <|-- Faction
+}
+
+' CharacterBlueprint
+Entity <|-- CharacterBlueprint
+
+
+class CharacterBlueprint
+{
+	-species_blueprint_id : SpeciesBlueprintIDType /' Used to get species, genders, and associated info '/
+	+SetSpeciesBlueprintID( SpeciesBlueprintIDType  ) : void
+	+GetSpeciesBlueprintID() : SpeciesBlueprintIDType  
 	
 }
 
-
+/'-------------------------------------------------------------------------------------------------------------------
+Maps
+-------------------------------------------------------------------------------------------------------------------'/
+package MapEditor
+{
+	abstract class HasPosition3D
+	{
+		-position_x : float
+		+SetPositionX( float ) : void
+		+GetPositionX() : float
+		-position_y : float
+		+SetPositionY( float ) : void
+		+GetPositionY() : float
+		-position_z : float
+		+SetPositionZ( float ) : void
+		+GetPositionZ() : float
+	}
+	
+	abstract class HasTextureID
+	{
+		-texture_id : TextureIDType
+		+SetTextureID( TextureIDType) : void
+		+GetTextureID() : TextureIDType
+	}
+	
+	' SceneryObject
+	HasPosition3D <|-- SceneryObject
+	HasTextureID <|-- SceneryObject
+	class SceneryObject
+	{
+		-mesh_id : MeshIDType
+		+SetMeshID( MeshIDType ) : void
+		+GetMeshID() : MeshIDType
+		-angle_pitch : float
+		-angle_yaw : float
+		-angle_roll : float
+		-scale_x : float
+		+SetScaleX( float ) : void
+		+GetScaleX() : float
+		-scale_y : float
+		+SetScaleY( float ) : void
+		+GetScaleY() : float
+		-scale_z : float
+		+SetScaleZ( float ) : void
+		+GetScaleZ() : float
+	}
+	
+	' SoundZone
+	HasPosition3D <|-- SoundZone
+	class SoundZone	/' Can be used for ambien sounds or looping music '/
+	{
+		-sound_ids : std::map< SoundIDType, VolumeValueType >
+		+AddSound( SoundIDType ) : void
+		+RemoveSound( SoundIDType  ) : void
+		-radius : float
+		+SetRadius( float ) : void
+		+GetRadius() : float 
+		-delay_between_loops: MillisecType /' delay between loops '/
+		+SetDelayBetweenLoops( MillisecType ) : void
+		+GetDelayBetweenLoops() : MillisecType 
+		-delay_between_sounds : MillisecType /' how many ms to pause before each song '/
+		+SetDelayBetweenSounds( MillisecType ) : void
+		+GetDelayBetweenSounds() : MillisecType 
+		-random_playback : bool /' randomize playback of sounds? '/
+		+SetRandomPlayback( bool ) : void
+		+GetRandomPlayback() : bool
+		
+	}
+	
+	' WaterZone
+	HasPosition3D <|-- WaterZone
+	HasTextureID <|-- WaterZone  /' texture for "water" '/
+	class WaterZone
+	{
+		-texture_scale : float	/' scale of the texture '/
+		+SetTextureScale( float ) : void
+		+GetTextureScale() : float
+		-scale_x : float	/' scale of the planar mesh '/
+		+SetScaleX( float ) : void
+		+GetScaleX() : float
+		-scale_y : float	/' scale of the planar mesh '/
+		+SetScaleY( float ) : void
+		+GetScaleY() : float
+		-color_r : irr::u8		/' for underwater color '/
+		+SetColorR( irr::u8 ) : void
+		+GetColorR() : irr::u8
+		-color_g : irr::u8		/' for underwater color '/
+		+SetColorG( irr::u8 ) : void
+		+GetColorG() : irr::u8
+		-color_b : irr::u8		/' for underwater color '/
+		+SetColorB( irr::u8 ) : void
+		+GetColorB() : irr::u8
+		-alpha : irr::u8		/' for underwater opacity'/
+		+SetAlpha( irr::u8 ) : void
+		+GetAlpha() : irr::u8
+	}
+	
+	' Map
+	.Entity <|-- Map
+	SceneryObject <.. Map
+	SoundZone <.. Map
+	WaterZone <.. Map
+	class Map
+	{
+		-loading_screen_image_id 			: TextureIDType
+		+SetLoadingScreenImageID( TextureIDType )	: void
+		+GetLoadingScreenImageID() 			: TextureIDType
+		-loading_sound_id 				: SoundIDType
+		+SetLoadingSoundID( SoundIDType ) 		: void
+		+GetLoadingSoundID() 				: SoundIDType
+		-minimap_image_id 				: TextureIDType
+		+SetMinimapImageID( TextureIDType ) 		: void
+		+GetMinimapImageID() 				: TextureIDType
+		-skybox_image_id 				: TextureIDType
+		+SetSkyboxImageID( TextureIDType ) 		: void
+		+GetSkyboxImageID() 				: TextureIDType
+		-scenery_objects 				: std::map< SceneryObjectIDType, SceneryObject >
+		+AddSceneryObject()
+		+RemoveSceneryObject()
+		-sound_zones 					: std::map< SoundZoneIDType, SoundZone >
+		+AddSoundZone()
+		+RemoveSoundZone()
+		-water_zones 					: std::map< WaterZoneIDType, WaterZone >
+		+AddWaterZone()
+		+RemoveWaterZone()
+	}
+}
 @enduml
